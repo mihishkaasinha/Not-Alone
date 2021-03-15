@@ -110,3 +110,7 @@ If the User makes a donation of any amount and the total donation amount (after 
 You can view the sections such as “My story” and “What’s Next”. “My story” contains details on I discovered the idea of the solution. “What’s Next” contains details of what the new functionalities I would like to implement in next versions of the solution
 
 
+Output link:
+https://mihishkaasinha.github.io/Not-Alone/
+
+
