@@ -18,9 +18,13 @@ This is just the start. We have many more exciting functionalities planned to be
 
 This solution is developed using the p5.js framework and use Google Firebase Real time database. In order to use the solution, you need to :
 •	Download the code the git repo 
+
 •	Go to js folder and open the config.js file
+
 •	Create a Google firebase account ( if you do not have) and create a project
+
 •	Go to Project Overview/Project settings/General/Firebase SDK snippet/config
+
 •	Copy the following :
   apiKey: "AIzaSyDunIMDQoQS5jfO7UJ2bpQ01US66fKyQsT",
   authDomain: "not-alone-6655.firebaseapp.com",
@@ -29,6 +33,7 @@ This solution is developed using the p5.js framework and use Google Firebase Rea
   storageBucket: "not-alone-6655.appspot.com",
   messagingSenderId: "577727362005",
   appId: "1:560727362005:web:961e73a5812d26a063d66c"
+
 
 •	Paste to config.js as:
   var appConfig={
@@ -43,6 +48,7 @@ This solution is developed using the p5.js framework and use Google Firebase Rea
   Note: Don’t change variable name “**appConfig**”
 
 •	Now you can launch the solution through Visual studio/Go live or through the 200 OK (Web server for chrome)
+
 •	You need to go in following order:
 
   o	**Orphanage Registration**: Click Orphanage. Register an Orphanage. On completion of registration, one Orphanage id will be created and shown on the page. Please note  
