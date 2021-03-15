@@ -113,4 +113,9 @@ You can view the sections such as “My story” and “What’s Next”. “My 
 Output link:
 https://mihishkaasinha.github.io/Not-Alone/
 
+Screenshot:
+
+<div align="center">
+    <img src="Home.png" width="400px"</img> Home Page
+</div>
 
