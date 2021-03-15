@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<!-- @author: Mihishkaa Sinha -->
+
+<!-- This is page for creating Funding request by an Orphanage -->
+
+<html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
+  <title>Not Alone - Connect the Needer to the Giver!</title>
+  <script src="./p5.play.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-database.js"></script>
+  <script src="js/config.js"></script>
+  <script>
+
+    // Your web app's Firebase configuration
+    var firebaseConfig = appConfig;
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  </script>
+  </script>
+
+  <center>
+    <h1> Raise Funding Request</h1>
+  </center>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+
+  <script src="js/raise_funding.js"></script>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <script>
+    function checkFundingStatus(orp_id, funding_required_amount) {
+
+
+      console.log("Donate orp_id:" + orp_id);
+
+      var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id").equalTo(parseInt(orp_id));
+      console.log("orphangeDetails:" + orphangeDetails);
+
+
+      orphangeDetails.once('value')
+        .then(function(snapshot) {
+
+          snapshot.forEach(function(childSnapshot) {
+
+            var database = firebase.database();
+            var funding_Orp = database.ref('funding').orderByChild("orp_id").equalTo(childSnapshot.child("orp_id").val());
+
+            var status = true;
+
+            console.log("Inside snapshot.forEach.. orp_id:" + childSnapshot.child("orp_id").val());
+
+
+
+            funding_Orp.once("value")
+              .then(function(snapshot2) {
+                if (snapshot2.exists()) {
+                  snapshot2.forEach(function(childSnapshot2) {
+
+                    if (childSnapshot2.child("funding_status").val() == "In-Progress") {
+
+                      // console.log("snapshot2.hasChild(\"funding\"):" + snapshot2.hasChild('funding') );
+                      console.log("setting status flag to true");
+
+                      //console.log("snapshot2.childSnapshot.exists():" + snapshot2.childSnapshot);
+                      status = false;
+                      console.log("Funding request not allowed as Orphange already has an active funding request:" + snapshot2.exists());
+                      window.location.href = "funding_req_failure.html?orp_id=" + orp_id;
+
+                    }
+
+
+                  });
+
+                  if (status) {
+                    console.log("Funding request  allowed as Orphange already do not have an active funding request:" + snapshot2.exists());
+                    //window.location.href = "funding_req_failure.html?orp_id=" + orp_id ;
+                    createNewFunding(orp_id, funding_required_amount.value());
+                  }
+
+
+
+                } else {
+                  console.log("Funding request allowed as Orphange do not have an active funding request and creating funding for first time:" + snapshot2.exists());
+
+                  //console.log("snapshot2.childSnapshot.exists():" + snapshot2.childSnapshot.exists);
+
+
+                  createNewFunding(orp_id, funding_required_amount.value());
+
+                }
+
+
+              });
+          });
+
+
+        });
+    }
+
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    function createNewFunding(orp_id, funding_required_amount) {
+
+      var funding_id = getRandomInt(50000);
+      let today = new Date().toLocaleDateString();
+
+      console.log("funding_request_date:" + today);
+      var funding_data = {
+        orp_id: parseInt(orp_id),
+        funding_required_amount: parseInt(funding_required_amount),
+        funding_fulfilled_amount: parseInt(0),
+        //funding_round_number : parseInt(funding_round),
+        funding_id: funding_id,
+        funding_status: 'In-Progress',
+        funding_request_date:today
+
+      };
+
+      var fundingKey = firebase.database().ref().child('funding').push().key;
+      // Write the new post's data simultaneously in the posts list and the user's post list.
+      var update_funding = {};
+
+      update_funding['/funding/' + fundingKey] = funding_data;
+
+      firebase.database().ref().update(update_funding);
+      window.setTimeout(function() {
+
+        // Your redirect is here
+        window.location.href = "funding_req_success.html?&funding_id=" + funding_id;
+        //window.location.href = "funding_req_failure.html?&funding_id=" + funding_id ;
+
+
+      }, 2050);
+
+    }
+  </script>
+
+  <script src="js/funding.js"></script>
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+</head>
+
+<body>
+  <script src="sketch_funding.js"></script>
+</body>
+
+
+<a href="orp_home.html" style="text-decoration: none;">
+  <button type="button" class="button_block">Back</button>
+</a>
+
+</html>

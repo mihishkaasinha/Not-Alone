@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<!-- @author: Mihishkaa Sinha -->
+<!-- This is page for dispalying success message on funding request processing -->
+
+<html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
+  <title>Not Alone - Connect the Needer to the Giver!</title>
+  <script src="./p5.play.js"></script>
+
+  <script>
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const funding_id = urlParams.get('funding_id');
+  </script>
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <center>
+    Congratulations! You have successfully raised a funding request for your Orphanage.
+    Your Funding id is : <script>
+      document.write(funding_id)
+    </script>
+    Please save it for future use.
+
+  </center>
+  <br>
+  <center>
+    <a href="orp_home.html" style="text-decoration: none;">
+      <button type="button" class="button_block">Back</button>
+    </a>
+  </center>
+</head>
+
+<body>
+
+</body>
+
+</html>

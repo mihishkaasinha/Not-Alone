@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<!-- @author: Mihishkaa Sinha -->
+
+<!-- This is page for enabling User to view active funding requests and make donation -->
+
+<html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
+  <title>Not Alone - Connect the Needer to the Giver!</title>
+  <script src="./p5.play.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-database.js"></script>
+
+  <script src="js/config.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = appConfig;
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  </script>
+  </script>
+
+
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+  <center>
+    <h1> Active Funding Requests</h1>
+  </center>
+
+</head>
+
+<body>
+  <div id="dvTable"></div>
+  <div id="TH"></div>
+  <div id="paid_status"></div>
+  <div id="no_org_exists"></div>
+  <div id="exceed_amount_status"></div>
+
+
+
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const paid_success = urlParams.get('paid_success');
+    const paid_success_orp_id = urlParams.get('orp_id');
+    const paid_success_funding_id = urlParams.get('funding_id');
+    const no_org_exists_status = urlParams.get('no_org_exists');
+
+    const exceed_amount_status_val = urlParams.get('exceed_amount_status');
+
+    
+
+    
+
+    if (paid_success != null) {
+
+      var paid_status = document.getElementById("paid_status");
+      paid_status.innerHTML = "<br><b><p style=\"color:red;background-color:yellow;\">Your donation was successful. Your contribution to Orphanage id " + paid_success_orp_id + " with Funding id " + paid_success_funding_id + " will help many lives. You made an impact to the world! </p>";
+
+    }
+
+    if (exceed_amount_status_val != null) {
+
+    var exceed_amount_status = document.getElementById("exceed_amount_status");
+    exceed_amount_status.innerHTML = "<br><b><p style=\"color:red;background-color:yellow;\">Your donation was successful.Total donation amount exceeded Funding required amount. Hence the funding request is closed!!  Your contribution to Orphanage id " + paid_success_orp_id + " with Funding id " + paid_success_funding_id + " will help many lives. You made an impact to the world! </p>";
+
+    }
+
+
+    if(no_org_exists_status == 'true'){
+
+      var no_org_exists_status_value = document.getElementById("no_org_exists");
+      no_org_exists_status_value.innerHTML = "<br><b><p style=\"color:red;background-color:yellow;\">No Orphanage has been registered yet. Please register an Orphanage first and raise a funding request. </p>";
+
+
+    }
+  </script>
+
+
+  <script>
+    var headerList = new Array();
+    var request_date_value ;
+    headerList.push(["Orphanage Id", "Orphanage Description",
+      "Orphanage Contact Number", "Orphanage PAN", "Orphanage address", "Funding ID", "Request Date",
+      "Funding Required Amount", "Funding Fulfilled Amount", "% Fullfilled", "Funding Status", "Donation Amount", ""
+    ]);
+
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    var table = document.createElement("TABLE");
+    table.border = "5";
+
+    //Get the count of columns.
+    var columnCount = headerList[0].length;
+
+    //Add the header row.
+    var row = table.insertRow(-1);
+    for (var i = 0; i < columnCount; i++) {
+      var headerCell = document.createElement("TH");
+      headerCell.innerHTML = headerList[0][i];
+      row.appendChild(headerCell);
+    }
+
+
+    var fundingList = new Array();
+    var counter = 0;
+    var lastCounter = 0;
+
+    //var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id").equalTo(15);
+    var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id");
+    orphangeDetails.once('value')
+      .then(function(snapshot) {
+        if (snapshot.exists()) {
+        snapshot.forEach(function(childSnapshot) {
+
+          console.log("orphangeDetails key:" + childSnapshot.key);
+          console.log("orphangeDetails orp id:" + childSnapshot.child("orp_id").val());
+          //console.log("break");
+
+          // var fundingDetails = firebase.database().ref('funding').orderByChild("orp_id").equalTo(15);
+
+
+          var database = firebase.database();
+
+
+          var tracker = false;
+          var fundingDetails = database.ref('funding').orderByChild("orp_id").equalTo(parseInt(childSnapshot.child("orp_id").val()));
+          fundingDetails.once("value")
+            .then(function(snapshot2) {
+              snapshot2.forEach(function(childSnapshot2) {
+                // "Orphanage Id","Orphanage Description","Orphanage Email-id",
+                //"Orphanage Contact Number",  "Orphanage PAN","Orphanage address","Funding Round",
+                //"Funding Required Amount", "Funding Fulfilled Amount","Funding % Fullfilled","Funding Status", ""
+
+                console.log("Orp id:" + childSnapshot2.child("orp_id").val());
+                console.log("funding id:" + parseInt(childSnapshot2.child("funding_id").val()));
+                console.log("funding status:" + childSnapshot2.child("funding_status").val());
+                //console.log("funding % fulfilled:" + (parseInt(childSnapshot2.child("funding_fulfilled_amount").val())/parseInt(childSnapshot2.child("funding_required_amount").val())) * 100);
+
+
+
+                donate_id = "donation_amount_id" + counter;
+                var str_fund_donate = "<input type=\"text\" size=\"3\" " + "id=\"" + donate_id + "\"" + " " + "name=\"" + donate_id + "\"" + " " + " />";
+
+
+                var donate_orp_id = childSnapshot.child("orp_id").val();
+                //var donate_funding_round = childSnapshot2.child("funding_round_number").val();
+
+
+
+                var orp_details_link = "<a href=funding_display_one_orp_user_temp.html?orp_id=" + donate_orp_id + ">" + donate_orp_id + "</a>";
+
+
+                var original_required_fund = childSnapshot2.child("funding_required_amount").val();
+                var current_funded_amount = childSnapshot2.child("funding_fulfilled_amount").val();
+                var funding_id = childSnapshot2.child("funding_id").val();
+
+                request_date_value = childSnapshot2.child("funding_request_date").val();
+
+                console.log("request_date_value:" + request_date_value.toString());
+
+                if (childSnapshot2.child("funding_status").val() == "In-Progress") {
+
+                  var donate_amount_form_value = "document.getElementById('" + donate_id + "').value";
+                  //var donate_amount_form_value;
+                  var str_donate = "<input style=\" margin-top: 5px;line-height: 30px; font-weight: bold;  padding: 0 40px;background: rgb(255, 208, 0);border: none;\" type=\"submit\" value=\"Donate\" name=\"submit\" onclick=\"" + "donate_amount(" + donate_orp_id + "," + funding_id + "," + original_required_fund + "," + current_funded_amount + "," + donate_amount_form_value + ", " + request_date_value  + "," + true + ") \" />";
+
+                  fundingList.push([orp_details_link, childSnapshot.child("orp_description").val(),
+                   childSnapshot.child("orp_phone").val(), childSnapshot.child("orp_pan").val(),
+                    childSnapshot.child("orp_address").val(),
+                    childSnapshot2.child("funding_id").val(), childSnapshot2.child("funding_request_date").val(), parseInt(childSnapshot2.child("funding_required_amount").val()),
+                    childSnapshot2.child("funding_fulfilled_amount").val(),
+                  ((parseInt(childSnapshot2.child("funding_fulfilled_amount").val()) / parseInt(childSnapshot2.child("funding_required_amount").val())) * 100).toFixed(2),
+                    childSnapshot2.child("funding_status").val(),
+                    str_fund_donate,
+                    str_donate
+                  ]);
+                  tracker = true;
+                  counter++;
+
+
+                }
+
+
+
+              });
+
+
+              if (tracker) {
+                console.log("fundingList:" + fundingList);
+                console.log("counter:" + counter);
+
+                console.log("columnCount:" + columnCount);
+                console.log("lastCounter:" + lastCounter);
+
+
+
+                //Add the data rows.
+                for (lastCounter; lastCounter < counter; lastCounter++) {
+                  row = table.insertRow(-1);
+
+                  for (var j = 0; j < columnCount; j++) {
+                    var cell = row.insertCell(-1);
+
+                    cell.innerHTML = fundingList[lastCounter][j];
+                    //console.log("fundingList[i][j]:" + fundingList[i][j]);
+                  }
+
+                  console.log("i value:" + i);
+                }
+
+
+                //console.log("cell.innerHTML:" + cell.innerHTML);
+
+                var dvTable = document.getElementById("dvTable");
+                dvTable.innerHTML = "";
+                dvTable.appendChild(table);
+
+                lastCounter = counter;
+                console.log("lastCounter:" + lastCounter);
+              }
+
+
+            });
+        });
+      }
+        else {
+                  console.log("No Orphanage has been registered yet:" + snapshot.exists());
+
+                  window.setTimeout(function() {
+
+                      // Your redirect is here
+                      window.location.href = "funding_display_all.html?no_org_exists=" + "true";
+
+                      }, 2050);
+
+                }
+      });
+  </script>
+  <script>
+    function donate_amount(orp_id, funding_id, original_required_fund, current_funded_amount, donation_amount,funding_request_date, load_flag) {
+
+      if (load_flag) {
+        //alert("opr id :" + orp_id );
+        //alert("funding round:" + funding_round);
+        //alert("donation amount" + donation_amount);
+
+        console.log("Donate orp_id:" + orp_id);
+        console.log("funding_request_date in method donate_amount:" + request_date_value.toString());
+        //var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id").equalTo(15);
+        var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id").equalTo(parseInt(orp_id));
+        orphangeDetails.once('value')
+          .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+              var database = firebase.database();
+              var fundingDetails = database.ref('funding').orderByChild("funding_id").equalTo(parseInt(funding_id));
+              fundingDetails.once("value")
+                .then(function(snapshot2) {
+                  snapshot2.forEach(function(childSnapshot2) {
+
+                    var new_funding_amount = parseInt(current_funded_amount) + parseInt(donation_amount);
+
+
+                    var payment_data;
+
+                    var exceed_requirement = false;
+                    if (new_funding_amount >= original_required_fund) {
+                      payment_data = {
+                        orp_id: parseInt(orp_id),
+                        funding_fulfilled_amount: parseInt(new_funding_amount),
+                        funding_id: funding_id,
+                        funding_required_amount: parseInt(original_required_fund),
+                        funding_status: 'Completed',
+                        funding_request_date:request_date_value.toString()
+                      }
+                      exceed_requirement = true;
+                    } else {
+                      payment_data = {
+                        orp_id: parseInt(orp_id),
+                        funding_fulfilled_amount: parseInt(new_funding_amount),
+                        funding_id: funding_id,
+                        funding_required_amount: parseInt(original_required_fund),
+                        funding_status: 'In-Progress',
+                        funding_request_date:request_date_value.toString()
+
+                      }
+                    }
+
+                    console.log("payment_data:" + payment_data);
+
+                    console.log("fundingKey:" + childSnapshot2.key);
+                    // Write the new post's data simultaneously in the posts list and the user's post list.
+                    var update_funding = {};
+
+                    update_funding['/funding/' + childSnapshot2.key] = payment_data;
+
+                    firebase.database().ref().update(update_funding);
+                    //location.reload();
+                    window.setTimeout(function() {
+
+                      // Your redirect is here
+                      if(exceed_requirement){
+                        console.log("Total donation amount exceeded Funding required amount");
+
+                        window.location.href = "funding_display_all.html?exceed_amount_status=" + "true" + "&&orp_id=" + orp_id + "&&funding_id=" + funding_id ;
+               
+                      }
+                      else{
+                     window.location.href = "funding_display_all.html?paid_success=" + "true" + "&&orp_id=" + orp_id + "&&funding_id=" + funding_id;
+                      }
+
+                    }, 2050);
+
+                  });
+                });
+            });
+          });
+      }
+    }
+  </script>
+
+  <br>
+
+  <a href="user_home.html" style="text-decoration: none;">
+    <button type="button" class="button_block"> Back</button>
+  </a>
+
+
+
+</body>
+
+</html>

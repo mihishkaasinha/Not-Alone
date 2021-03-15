@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<!-- @author: Mihishkaa Sinha -->
+
+<!-- This is orphanage registration page -->
+
+<html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
+  <title>Not Alone - Connect the Needer to the Giver!</title>
+  <script src="./p5.play.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-database.js"></script>
+
+  <center>
+    <h1> Register your Orphanage</h1>
+  </center>
+
+  <script src="js/config.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = appConfig;
+    console.log("firebaseConfig:" + firebaseConfig);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  </script>
+  </script>
+  <script src="js/registration_orp.js"></script>
+
+  <script>
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
+
+    function createOrphanage(orp_id, name, address, email, mobile_no, pan, password, desc) {
+
+      var orpData = {
+        orp_id: parseInt(orp_id),
+        orp_name: name,
+        orp_email: email,
+        orp_phone: mobile_no,
+        orp_pan: pan,
+        orp_password: password,
+        orp_address: address,
+        orp_description: desc
+      };
+
+      var orpKey = firebase.database().ref().child('orphanage').push().key;
+      // Write the new post's data simultaneously in the posts list and the user's post list.
+      var updates = {};
+
+      updates['/orphanage/' + orpKey] = orpData;
+
+      return firebase.database().ref().update(updates);
+
+
+
+    }
+  </script>
+
+  <script src="js/orp_reg.js"></script>
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+
+</head>
+
+<body>
+  <div id="dvTable"></div>
+  <div id="TH"></div>
+  <script src="sketch_orp_reg.js"></script>
+
+  <script>
+
+
+  </script>
+
+  <br>
+  <a href="orp_base.html" style="text-decoration: none;">
+    <button type="button" class="button_block">Back</button>
+  </a>
+</body>
+
+</html>

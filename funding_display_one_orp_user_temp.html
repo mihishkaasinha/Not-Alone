@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<!-- @author: Mihishkaa Sinha -->
+<!-- This is page for dispalying all funding requests for one orphanage -->
+
+<html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
+  <title>Not Alone - Connect the Needer to the Giver!</title>
+  <script src="./p5.play.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-database.js"></script>
+
+  <script src="js/config.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = appConfig;
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  </script>
+  </script>
+
+
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+  <center>
+    <h1> Active Funding Requests</h1>
+  </center>
+
+</head>
+
+<body>
+  <div id="dvTable"></div>
+  <div id="TH"></div>
+  <div id="paid_status"></div>
+
+
+
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const orp_id = urlParams.get('orp_id');
+    var orp_id_value = parseInt(orp_id);
+
+
+    console.log("Funding details for one orphanage:" + orp_id_value);
+  </script>
+
+
+  <script>
+    var headerList = new Array();
+
+    headerList.push(["Orphanage Id", "Orphanage Description",
+      "Orphanage Contact Number", "Orphanage PAN", "Orphanage address", "Funding Id","Request Date",
+      "Funding Required Amount", "Funding Fulfilled Amount", "Funding % Fullfilled", "Funding Status"
+    ]);
+
+
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    var table = document.createElement("TABLE");
+    table.border = "5";
+
+    //Get the count of columns.
+    var columnCount = headerList[0].length;
+
+    //Add the header row.
+    var row = table.insertRow(-1);
+    for (var i = 0; i < columnCount; i++) {
+      var headerCell = document.createElement("TH");
+      headerCell.innerHTML = headerList[0][i];
+      row.appendChild(headerCell);
+    }
+
+
+    var fundingList = new Array();
+    var counter = 0;
+    var lastCounter = 0;
+
+    var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id").equalTo(orp_id_value);
+    //var orphangeDetails = firebase.database().ref('orphanage').orderByChild("orp_id");
+    orphangeDetails.once('value')
+      .then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+
+          console.log("orphangeDetails key:" + childSnapshot.key);
+          console.log("orphangeDetails orp id:" + childSnapshot.child("orp_id").val());
+          //console.log("break");
+
+          // var fundingDetails = firebase.database().ref('funding').orderByChild("orp_id").equalTo(15);
+
+
+          var database = firebase.database();
+
+
+          var tracker = false;
+          var fundingDetails = database.ref('funding').orderByChild("orp_id").equalTo(parseInt(childSnapshot.child("orp_id").val()));
+          fundingDetails.once("value")
+            .then(function(snapshot2) {
+              snapshot2.forEach(function(childSnapshot2) {
+                // "Orphanage Id","Orphanage Description","Orphanage Email-id",
+                //"Orphanage Contact Number",  "Orphanage PAN","Orphanage address","Funding Round",
+                //"Funding Required Amount", "Funding Fulfilled Amount","Funding % Fullfilled","Funding Status", ""
+
+                console.log("Orp id:" + childSnapshot2.child("orp_id").val());
+                console.log("funding id:" + parseInt(childSnapshot2.child("funding_id").val()));
+                console.log("funding status:" + childSnapshot2.child("funding_status").val());
+                //console.log("funding % fulfilled:" + (parseInt(childSnapshot2.child("funding_fulfilled_amount").val())/parseInt(childSnapshot2.child("funding_required_amount").val())) * 100);
+
+
+
+                donate_id = "donation_amount_id" + counter;
+                var str_fund_donate = "<input type=\"text\" size=\"4\" " + "id=\"" + donate_id + "\"" + " " + "name=\"" + donate_id + "\"" + " " + " />";
+
+
+                var donate_orp_id = childSnapshot.child("orp_id").val();
+                //var donate_funding_round = childSnapshot2.child("funding_round_number").val();
+
+                var original_required_fund = childSnapshot2.child("funding_required_amount").val();
+                var current_funded_amount = childSnapshot2.child("funding_fulfilled_amount").val();
+                var funding_id = childSnapshot2.child("funding_id").val();
+
+
+
+
+
+                var donate_amount_form_value = "document.getElementById('" + donate_id + "').value";
+                //var donate_amount_form_value;
+                var str_donate = "<input type=\"submit\" value=\"Donate\" name=\"submit\" onclick=\"" + "donate_amount(" + donate_orp_id + "," + funding_id + "," + original_required_fund + "," + current_funded_amount + "," + donate_amount_form_value + "," + true + ") \" />";
+
+                fundingList.push([childSnapshot.child("orp_id").val(), childSnapshot.child("orp_description").val(),
+                   childSnapshot.child("orp_phone").val(), childSnapshot.child("orp_pan").val(),
+                  childSnapshot.child("orp_address").val(),
+                  childSnapshot2.child("funding_id").val(), childSnapshot2.child("funding_request_date").val(), parseInt(childSnapshot2.child("funding_required_amount").val()),
+                  childSnapshot2.child("funding_fulfilled_amount").val(),
+                  ((parseInt(childSnapshot2.child("funding_fulfilled_amount").val()) / parseInt(childSnapshot2.child("funding_required_amount").val())) * 100).toFixed(2),
+                  childSnapshot2.child("funding_status").val()
+                ]);
+                tracker = true;
+                counter++;
+
+
+
+
+
+              });
+
+
+              if (tracker) {
+                console.log("fundingList:" + fundingList);
+                console.log("counter:" + counter);
+
+                console.log("columnCount:" + columnCount);
+                console.log("lastCounter:" + lastCounter);
+
+
+
+                //Add the data rows.
+                for (lastCounter; lastCounter < counter; lastCounter++) {
+                  row = table.insertRow(-1);
+
+                  for (var j = 0; j < columnCount; j++) {
+                    var cell = row.insertCell(-1);
+
+                    cell.innerHTML = fundingList[lastCounter][j];
+                    //console.log("fundingList[i][j]:" + fundingList[i][j]);
+                  }
+
+                  console.log("i value:" + i);
+                }
+
+
+                //console.log("cell.innerHTML:" + cell.innerHTML);
+
+                var dvTable = document.getElementById("dvTable");
+                dvTable.innerHTML = "";
+                dvTable.appendChild(table);
+
+                lastCounter = counter;
+                console.log("lastCounter:" + lastCounter);
+              }
+
+
+            });
+        });
+
+      });
+  </script>
+
+  <br>
+
+  <a href="funding_display_all.html" style="text-decoration: none;">
+    <button type="button" class="button_block"> Back</button>
+  </a>
+
+
+
+</body>
+
+</html>
