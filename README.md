@@ -28,28 +28,47 @@ This solution is developed using the p5.js framework and use Google Firebase Rea
 
 •	Copy the following :
 
+
   apiKey: "AIzaSyDunIMDQoQS5jfO7UJ2bpQ01US66fKyQsT",
+  
   authDomain: "not-alone-6655.firebaseapp.com",
+  
   databaseURL: https://not-alone-6655-default-rtdb.firebaseio.com,
+  
   projectId: "not-alone-6655",
+  
   storageBucket: "not-alone-6655.appspot.com",
+  
   messagingSenderId: "577727362005",
+  
   appId: "1:560727362005:web:961e73a5812d26a063d66c"
+  
 
 
 •	Paste to config.js as:
 
+
   var appConfig={
+  
     apiKey: "AIzaSyDunIMDQoQS5jfO7UJ2bpQ01US66fKyQsT",
+    
     authDomain: "not-alone-6655.firebaseapp.com",
+    
     databaseURL: https://not-alone-6655-default-rtdb.firebaseio.com,
+    
     projectId: "not-alone-6655",
+    
     storageBucket: "not-alone-6655.appspot.com",
+    
     messagingSenderId: "577727362005",
+    
     appId: "1:560727362005:web:961e73a5812d26a063d66c"
+    
     }
     
+    
   Note: Don’t change variable name “**appConfig**”
+  
 
 •	Now you can launch the solution through Visual studio/Go live or through the 200 OK (Web server for chrome)
 
