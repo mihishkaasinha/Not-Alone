@@ -7,7 +7,7 @@ The first version of the solution provides the following functionalities:
   •	**Raise Funding Request**: Orphanage can raise a request to raise funding based on their requirements. One orphanage can raise only one funding request at a time. Only       when a given round of funding is closed, is the Orphanage allowed to raise a new funding request
   
   •	**View Funding status by Orphanage**: Orphanage can view the status of the past and recent funding request using their Orphanage ID ( assigned at time of Orphanage      
-    registration)
+     registration)
     
   •	**User registration**: Any User who wants to make contributions to the Orphanages can register themselves
   
