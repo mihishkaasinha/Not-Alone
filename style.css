@@ -2,12 +2,12 @@
 *::before,
 *::after {
 box-sizing: border-box;
-font-family: Comic Sans MS;
+font-family: Gadugi;
 font-weight: normal;
-font-size: 17px;
+font-size: 20px;
 padding: 0px;
 padding-left: 15px;
-color: rgb(2, 36, 33);
+color: rgb(255, 255, 255);
 }
 
 body {
