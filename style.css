@@ -20,7 +20,7 @@ body {
   }
 
   .newbody {
-  background: url("background.jfif");
+  background: url('https://cdn1.vectorstock.com/i/1000x1000/86/15/black-polygonal-mosaic-background-creative-design-vector-24168615.jpg');
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -96,12 +96,14 @@ display: none;
 padding: 6px 12px;
 border: 1px solid #ccc;
 border-top: none;
+color: white;
 }
 
 span {
-
-font-weight: bold;
-
+font-weight: bolder;
+color: white;
+font-family: 'Maiandra GD';
+font-size: 20px;
 }
 
 th, td {
@@ -134,7 +136,8 @@ background-size: cover;
 }
 
 .centeralign {
-  color: rgb(15, 37, 161);
+  color: white;
+  font-family: 'Acme';
 }
 
 
